@@ -1,14 +1,14 @@
 This is a simple authentication and client/serverside validation
 
-Tech used
+Tech used->
 nodejs (express)
 nextjs (react)
 db (postgres)
 
-Authentication
+Authentication->
 passporjs (local strategy),
 bcrypt for encryption
 
-Validation
+Validation->
 server: joi, 
 client: react-hook-form
