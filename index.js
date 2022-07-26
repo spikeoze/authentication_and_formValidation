@@ -10,8 +10,8 @@ import { PrismaClient } from "@prisma/client";
 import { passportConfig } from "./passportConfig.js";
 const prisma = new PrismaClient();
 import Joi from "joi";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { registerValidator, validatorMiddlewere } from "./schemaValidation.js";
-
 
 //---------------------middleweres---------------------------//
 app.use(Express.json());
@@ -29,11 +29,11 @@ app.use(
     saveUninitialized: true,
     resave: false,
 
-    // store: new PrismaSessionStore(new PrismaClient(), {
-    //   checkPeriod: 2 * 60 * 1000, //ms
-    //   dbRecordIdIsSessionId: true,
-    //   dbRecordIdFunction: undefined,
-    // }),
+    store: new PrismaSessionStore(new PrismaClient(), {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
     },
@@ -53,6 +53,10 @@ app.post(
   }),
   (req, res, next) => {}
 );
+
+app.get("/test", (req, res) => {
+  res.json("works");
+});
 
 // TODO
 app.post(
@@ -134,6 +138,8 @@ app.get("/protected-route", (req, res, next) => {
 app.get("/user", (req, res) => {
   if (req.user) {
     res.json(req.user);
+  } else {
+    res.json(null);
   }
 });
 
@@ -156,7 +162,7 @@ app.get("/login-success", (req, res, next) => {
 });
 
 app.get("/login-failure", (req, res, next) => {
-  res.send("You entered the wrong password.");
+  res.status(400).json("invalid username or password");
 });
 
 app.listen(8000, () => {
